@@ -1,4 +1,4 @@
-// Import the functions you need from the SDKs you need
+// Import Firebase functions
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
@@ -8,7 +8,7 @@ import {
 } from "firebase/auth";
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 
-// Your web app's Firebase configuration
+// Store Firebase credentials in an environment variable (Recommended)
 const firebaseConfig = {
   apiKey: "AIzaSyAv8gRCUT9vq7AJuUWI7vkqNGMKVh_cOnM",
   authDomain: "crown-clothing-db-9eefe.firebaseapp.com",
@@ -21,15 +21,17 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-const provider = new GoogleAuthProvider();
-provider.setCustomParameters({
+const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({
   prompt: "select_account",
 });
 
 export const auth = getAuth();
+
+// Google Sign-In with Popup
 export const signInWithGooglePopup = async () => {
   try {
-    const result = await signInWithPopup(auth, provider);
+    const result = await signInWithPopup(auth, googleProvider);
     console.log("User signed in:", result.user);
     return result;
   } catch (error) {
@@ -37,23 +39,34 @@ export const signInWithGooglePopup = async () => {
   }
 };
 
+// Google Sign-In with Redirect (Proper function)
+export const signInWithGoogleRedirect = async () => {
+  try {
+    await signInWithRedirect(auth, googleProvider);
+  } catch (error) {
+    console.error("Error during redirect sign-in:", error);
+  }
+};
+
+// Firestore Database
 export const db = getFirestore();
 
+// Create or Retrieve User Document
 export const createUserDocFromAuth = async (userAuth) => {
-  const userDocRef = doc(db, "user", userAuth.uid);
+  if (!userAuth) return; // Ensure userAuth is valid
 
-  console.log(userDocRef);
+  const userDocRef = doc(db, "users", userAuth.uid);
   const userSnapShot = await getDoc(userDocRef);
-  console.log(userSnapShot.exists());
 
-  if (!userSnapShot.exists) {
-    const { dispayName, email } = userAuth;
+  if (!userSnapShot.exists()) {
+    const { displayName, email } = userAuth;
     const createdAt = new Date();
 
     try {
-      await setDoc(userDocRef, { dispayName, email, createdAt });
+      await setDoc(userDocRef, { displayName, email, createdAt });
+      console.log("User document created successfully!");
     } catch (error) {
-      console.log("Error Creating User ", error.message);
+      console.error("Error creating user document:", error.message);
     }
   }
   return userDocRef;
