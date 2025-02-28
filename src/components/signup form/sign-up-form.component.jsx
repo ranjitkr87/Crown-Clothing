@@ -9,22 +9,32 @@ const defaultFormFields = {
 
 const SignUpForm = () => {
   const [formFields, setFormFields] = useState(defaultFormFields);
-  const [displayName, email, password, confirmPassword] = formFields;
-  const handleChange = (event) => {};
+  const { displayName, email, password, confirmPassword } = formFields;
+
+  console.log(formFields);
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormFields({ ...formFields, [name]: value });
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault(); //
+    console.log("Form submitted:", formFields);
+  };
 
   return (
     <div>
-      <h1>Signup with email and password</h1>
-      <form>
-        <label>Dispaly Name</label>
+      <h1>Sign Up with Email and Password</h1>
+      <form onSubmit={handleSubmit}>
+        <label>Display Name</label>
         <input
           type="text"
           required
           onChange={handleChange}
           name="displayName"
           value={displayName}
-        ></input>
-
+        />
         <label>Email</label>
         <input
           type="email"
@@ -32,8 +42,7 @@ const SignUpForm = () => {
           onChange={handleChange}
           name="email"
           value={email}
-        ></input>
-
+        />
         <label>Password</label>
         <input
           type="password"
@@ -41,8 +50,7 @@ const SignUpForm = () => {
           onChange={handleChange}
           name="password"
           value={password}
-        ></input>
-
+        />
         <label>Confirm Password</label>
         <input
           type="password"
@@ -50,11 +58,11 @@ const SignUpForm = () => {
           onChange={handleChange}
           name="confirmPassword"
           value={confirmPassword}
-        ></input>
-
+        />
         <button type="submit">Submit</button>
       </form>
     </div>
   );
 };
+
 export default SignUpForm;
