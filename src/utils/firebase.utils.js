@@ -21,6 +21,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+console.log(app);
 
 const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({
@@ -53,8 +54,11 @@ export const signInWithGoogleRedirect = async () => {
 export const db = getFirestore();
 
 // Create or Retrieve User Document
-export const createUserDocFromAuth = async (userAuth) => {
-  if (!userAuth) return; // Ensure userAuth is valid
+export const createUserDocFromAuth = async (
+  userAuth,
+  additionalInformation = { displayName: "Ranjit" }
+) => {
+  if (!userAuth) return;
 
   const userDocRef = doc(db, "users", userAuth.uid);
   const userSnapShot = await getDoc(userDocRef);
@@ -64,7 +68,12 @@ export const createUserDocFromAuth = async (userAuth) => {
     const createdAt = new Date();
 
     try {
-      await setDoc(userDocRef, { displayName, email, createdAt });
+      await setDoc(userDocRef, {
+        displayName,
+        email,
+        createdAt,
+        additionalInformation,
+      });
       console.log("User document created successfully!");
     } catch (error) {
       console.error("Error creating user document:", error.message);

@@ -4,6 +4,7 @@ import {
   createUserDocFromAuth,
 } from "../../utils/firebase.utils";
 import SignUpForm from "../../components/signup form/sign-up-form.component";
+import { createAuthUserWithEmailAndPassword } from "../../utils/firebase.utils";
 
 const SignIn = () => {
   const logGoogleUser = async () => {
